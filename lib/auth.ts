@@ -35,15 +35,13 @@ provider.setCustomParameters({
 });
 
 export const firebaseSignIn = async () => {
-  console.log("SIGNIN");
-  signInWithPopup(auth, provider)
-    .then(async (result) => {
-      console.log(result);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-};
+    signInWithPopup(auth, provider)
+        .then(async (result) => {
+            console.log(result);
+        }).catch((error) => {
+            console.error(error);
+        })
+}
 
 export const firebaseSignOut = async () => {
   try {
