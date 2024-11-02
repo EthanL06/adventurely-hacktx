@@ -1,0 +1,19 @@
+/* Infinite scroll animation */
+.infinite-scroll {
+  position: absolute;
+  width: 200%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  display: flex;
+  animation: scroll-horizontal 10s linear infinite;
+}
+@keyframes scroll-horizontal {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
