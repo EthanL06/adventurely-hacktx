@@ -1,20 +1,24 @@
+'use client'
+
 /* eslint-disable @next/next/no-img-element */
 import { Button } from "@/components/ui/button";
+import { useAuth, firebaseSignIn } from "@/lib/auth";
 
 export default function Home() {
-  return (
+    const { user } = useAuth();
+    return (
     <div className="relative">
       <div id="interlaced" className="z-50"></div>
       <div className="fixed left-0 top-36 z-0">
         <div className="relative flex w-full flex-nowrap">
-          <div className="animate-infinite-scroll-x flex h-screen w-screen items-center justify-center md:justify-start">
+          <div className="flex h-screen w-screen animate-infinite-scroll-x items-center justify-center md:justify-start">
             <img
               src="./images/background.png"
               alt="background"
               className="size-full object-cover"
             />
           </div>
-          <div className="animate-infinite-scroll-x flex h-screen w-screen items-center justify-center md:justify-start">
+          <div className="flex h-screen w-screen animate-infinite-scroll-x items-center justify-center md:justify-start">
             <img
               src="./images/background.png"
               alt="background"
@@ -35,7 +39,7 @@ export default function Home() {
           </p>
         </div>
         <div className="flex flex-col gap-y-4">
-          <Button>
+          <Button onClick={firebaseSignIn}>
             <div className="relative">
               <i className="nes-icon google"></i>
             </div>
