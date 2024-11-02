@@ -15,7 +15,7 @@ const TaskGroup = ({ date, tasks }: Props) => {
     <div>
       <h2
         className={cn(
-          "mb-4 text-xl",
+          "retro-text mb-4 text-xl",
           date === "Today" && "text-[#85B6F2]",
           date === "Overdue" && "text-red-500",
         )}

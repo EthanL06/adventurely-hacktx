@@ -62,6 +62,22 @@
   box-shadow: inset 4px 4px #adafbc;
 }
 
+.nes-btn.is-primary::after {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  bottom: -4px;
+  left: -4px;
+  content: "";
+  box-shadow: inset -4px -4px #006bb3;
+}
+
+.nes-btn.is-primary:hover {
+  color: #fff;
+  text-decoration: none;
+  background-color: #108de0;
+}
+
 /* NES icon styles */
 .nes-icon.google::before {
   width: 1px;

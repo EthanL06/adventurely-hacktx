@@ -1,8 +1,23 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import Container from "@/components/ui/container";
 import React from "react";
 import TaskGroup from "./_components/TaskGroup";
-import { TaskType } from "@/types";
+import { TaskType } from "../../types";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import Link from "next/link";
 
 type Props = {};
 
@@ -173,31 +188,100 @@ const Page = (props: Props) => {
 
   // Sort the tasks in each group by due date
   Object.keys(groupedTasks).forEach((date) => {
-    groupedTasks[date].sort((a, b) => {
-      return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
-    });
+    groupedTasks[date].sort(
+      (
+        a: { due_date: string | number | Date },
+        b: { due_date: string | number | Date },
+      ) => {
+        return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
+      },
+    );
   });
 
   return (
-    <div className="p-12">
+    <div className="px-12 py-4">
+      <Link href={"/dashboard"}>
+        <Button className="p-0" variant={"ghost"}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+          >
+            <path d="m12 19-7-7 7-7" />
+            <path d="M19 12H5" />
+          </svg>
+          <div>Back to Dashboard</div>
+        </Button>
+      </Link>
+
       <Container>
         <div className="flex justify-between">
-          <h1 className="text-3xl">Your Tasks</h1>
-          <Button className="flex items-center" size={"xs"}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3"
-            >
-              <path d="M5 12h14" />
-              <path d="M12 5v14" />
-            </svg>
-            <div>Add Task</div>
-          </Button>
+          <h1 className="retro-text text-3xl">Your Tasks (3/9 complete)</h1>
+          <div className="flex items-center">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="flex items-center" size={"xs"}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="M12 5v14" />
+                  </svg>
+                  <div>Add Task</div>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-[40rem]">
+                <DialogHeader>
+                  <DialogTitle>Add a new task...</DialogTitle>
+                </DialogHeader>
+
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                  }}
+                  className="space-y-4"
+                >
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Title</Label>
+                    <Input id="title" placeholder="Task title" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea id="description" placeholder="Task description" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="due_date">Due Date</Label>
+                    <Input
+                      type="datetime-local"
+                      id="due_date"
+                      placeholder="Task due date"
+                    />
+                  </div>
+
+                  <DialogFooter>
+                    <Button
+                      type="submit"
+                      className="is-primary ml-auto mt-4 w-full bg-[#209CEE] text-white"
+                    >
+                      Submit
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
 
         <div className="mt-8 flex flex-col gap-y-12">
