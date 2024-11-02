@@ -5,17 +5,22 @@ type Props = {
   title?: string;
   center?: boolean;
   children: React.ReactNode;
+  className?: string;
 };
 
-const Container = ({ title, center = false, children }: Props) => {
+const Container = ({ title, center = false, children, className }: Props) => {
   return (
     <div
-      className={cn(`nes-container bg-white`, {
-        "with-title": title,
-        "is-centered": center,
-      })}
+      className={cn(
+        `nes-container bg-white`,
+        {
+          "with-title": title,
+          "is-centered": center,
+        },
+        className,
+      )}
     >
-      <p className="title">{title}</p>
+      {title && <p className="title">{title}</p>}
       {children}
     </div>
   );
