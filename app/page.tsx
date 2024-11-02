@@ -8,14 +8,14 @@ export default function Home() {
   const router = useRouter();
   const { user } = useAuth();
 
-  if (user) {
-    router.push("/dashboard");
-    return (
-      <div className="grid min-h-screen place-items-center">
-        <div>Loading...</div>
-      </div>
-    );
-  }
+  // if (user) {
+  //   router.push("/dashboard");
+  //   return (
+  //     <div className="grid min-h-screen place-items-center">
+  //       <div>Loading...</div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="relative bottom-14 z-50 flex min-h-screen flex-col items-center justify-center p-5">
@@ -30,10 +30,10 @@ export default function Home() {
       </div>
       <div className="flex flex-col gap-y-4">
         <Button onClick={firebaseSignIn}>
-          <div className="relative">
+          <div className="relative h-5 w-2.5">
             <i className="nes-icon google"></i>
           </div>
-          <div className="ml-7">Sign In with Google</div>
+          <div className="ml-5">Sign In with Google</div>
         </Button>
         <Button className="text-sm" variant={"ghost"}>
           Play as Guest
