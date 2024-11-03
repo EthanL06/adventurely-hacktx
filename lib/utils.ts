@@ -15,7 +15,7 @@ import { create } from "zustand";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-// import type { Profiles } from "../types/profiles";
+import type { Profiles } from "../types/profiles";
 import type { Tasks, Task } from "../types/tasks";
 import { getStats, getSubtasks } from "@/app/actions";
 
@@ -98,16 +98,33 @@ export const useTasks = () => {
     fetchSubtasks,
   } = useTasksStore();
 
-  useEffect(() => {
-    const q = query(collection(db, "tasks"));
-    const unsubscribe = onSnapshot(q, async () => {
-      await fetchTasks();
-    });
+    useEffect(() => {
+        const q = query(collection(db, "tasks"));
+        const unsubscribe = onSnapshot(q, async () => {
+            await fetchTasks();
+            // Get current profile stats
+            const profile: Profiles = (await getDoc(doc(db, "profiles", auth.currentUser!.uid))).data() as Profiles;
+            tasksQuery?.docs.forEach(async (taskdoc) => {
+                // Only add stats per each task marked done
+                if (taskdoc.data().done) {
+                    // Update profile stats
+                    await updateDoc(doc(db, "profiles", auth.currentUser!.uid), {
+                        stats: {
+                            hp: profile.stats.hp + 1,
+                            xp: profile.stats.xp + 5,
+                            str: profile.stats.str + 1,
+                            int: profile.stats.int + 1,
+                            level: profile.stats.xp % 100 === 0 ? profile.stats.level + 1 : profile.stats.level
+                        }
+                    });
+                }
+            });
+        });
 
-    return () => {
-      unsubscribe();
-    };
-  }, [fetchTasks]);
+        return () => {
+            unsubscribe();
+        }
+    }, [fetchTasks, tasksQuery]);
 
   return { tasksQuery, addTask, removeTask, updateTask, fetchSubtasks };
 };
