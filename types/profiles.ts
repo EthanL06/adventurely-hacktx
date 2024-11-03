@@ -7,3 +7,8 @@ export interface Profiles {
         level: number;
     }
 }
+
+export interface Profile {
+    profile: Profiles | null;
+    fetchProfile: () => void;
+}
