@@ -17,17 +17,145 @@ const getLocalTime = () => {
   return `${hours}:${minutes} ${ampm}`;
 };
 
-const getRandom = () => {
-  return Math.floor(Math.random() * 100) + 1;
+const truncateText = (text: string, threshold: number) => {
+  return text.length > threshold ? text.substring(0, threshold) + "..." : text;
 };
 
-// LOAD STATS, getRandom() is temporary
-var stats = {
-  power: getRandom(),
-  luck: getRandom(),
-  health: getRandom(),
-  stamina: getRandom(),
+const capitalize = (string: string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 };
+
+const exampleJSON = {
+  quests: {
+    lastRefresh: null as string | null,
+    daily: [
+      {
+        name: "Quest 1",
+        complete: false,
+        reward: {
+          power: 5,
+          luck: 5,
+          health: 5,
+        },
+      },
+      {
+        name: "Quest 2",
+        complete: false,
+        reward: {
+          power: 5,
+          luck: 5,
+          health: 5,
+        },
+      },
+      {
+        name: "Quest 3",
+        complete: true,
+        reward: {
+          power: 5,
+          luck: 5,
+          health: 5,
+        },
+      },
+    ],
+  },
+  tasks: [
+    {
+      id: 1,
+      title: "Website Redesign Project",
+      description:
+        "Redesign the company website to improve user experience and modernize the interface. This includes updating the visual style, reorganizing content, and ensuring mobile compatibility.",
+      due_date: "11/2/2024",
+      complete: false,
+      subtasks: [
+        {
+          title: "Research user preferences",
+          description:
+            "Conduct surveys and analyze user feedback to identify key pain points in the current design.",
+        },
+        {
+          title: "Create initial wireframes",
+          description:
+            "Develop wireframes to outline the updated layout and content structure.",
+        },
+      ],
+    },
+    {
+      id: 2,
+      title: "Q4 Marketing Campaign",
+      description:
+        "Plan and execute a targeted marketing campaign to increase engagement and sales during the holiday season. Focus on social media, email marketing, and influencer collaborations.",
+      due_date: "11/2/2024",
+      complete: false,
+      subtasks: [
+        {
+          title: "Identify key influencers",
+          description:
+            "Compile a list of influencers who align with the brand and reach out for collaboration.",
+        },
+        {
+          title: "Develop social media content",
+          description:
+            "Create engaging posts, stories, and ads for the campaign, ensuring consistency with the brand message.",
+        },
+      ],
+    },
+    {
+      id: 3,
+      title: "End-of-Year Financial Reporting",
+      description:
+        "Prepare financial statements and reports for the fiscal year. Ensure all records are accurate and aligned with auditing standards.",
+      due_date: "11/2/2024",
+      complete: false,
+      subtasks: [
+        {
+          title: "Compile financial data",
+          description:
+            "Gather and organize all relevant financial records from the year.",
+        },
+        {
+          title: "Review and audit data",
+          description:
+            "Conduct an internal review to ensure accuracy and compliance with regulations.",
+        },
+      ],
+    },
+    {
+      id: 3,
+      title: "End Financial TESTTT",
+      description:
+        "Prepare financial statements and reports for the fiscal year. Ensure all records are accurate and aligned with auditing standards.",
+      due_date: "11/2/2024",
+      complete: false,
+      subtasks: [
+        {
+          title: "Compile financial data",
+          description:
+            "Gather and organize all relevant financial records from the year.",
+        },
+        {
+          title: "Review and audit data",
+          description:
+            "Conduct an internal review to ensure accuracy and compliance with regulations.",
+        },
+      ],
+    },
+  ],
+  stats: {
+    power: 100,
+    luck: 100,
+    health: 100,
+    stamina: 100,
+  },
+};
+
+// TASKS
+
+const today = new Date().toLocaleDateString("en-US");
+const todayTasks = exampleJSON.tasks
+  .filter((task) => task.due_date == today && !task.complete)
+  .slice(0, 3);
+
+// LOAD STATS, getRandom() is temporary
 
 const Home = (props: Props) => {
   const router = useRouter();
@@ -51,13 +179,31 @@ const Home = (props: Props) => {
 
       const intervalId = setInterval(() => {
         setCurrentTime(getLocalTime());
-      }, 60000);
+      }, 1000);
 
       return () => clearInterval(intervalId);
     }, msUntilNextMinute);
 
     return () => clearTimeout(timeoutId);
   }, []);
+
+  // STATS
+  // TODO: Load stats from database
+  var [stats] = useState({
+    power: exampleJSON.stats.power,
+    luck: exampleJSON.stats.luck,
+    health: exampleJSON.stats.health,
+    stamina: exampleJSON.stats.stamina,
+  });
+
+  // QUESTS
+  if (
+    exampleJSON.quests.lastRefresh == null ||
+    exampleJSON.quests.lastRefresh != today
+  ) {
+    exampleJSON.quests.lastRefresh = today;
+    // Refresh quests here
+  }
 
   return (
     <div className="p-4">
@@ -174,23 +320,29 @@ const Home = (props: Props) => {
           <div className="grid grid-cols-2 grid-rows-1 gap-4">
             <div>
               <h1 className="text-1xl retro-text pb-3 pt-2 text-center text-black">
-                Today's Tasks
+                Today's To-Do
               </h1>
               <div
                 id="today-tasks"
-                className="grid min-h-40 gap-2 border-4 border-solid border-black p-2.5 text-sm text-white"
+                className={`grid min-h-40 grid-rows-${todayTasks.length > 1 ? todayTasks.length : 1} gap-2 border-4 border-solid border-black p-2.5 text-sm text-white`}
               >
-                {/*INSERT TASKS HERE*/}
-
-                <div id="no-tasks" className="text-center text-xs text-black">
-                  <i>Looks like you have nothing to do today!</i>
-                </div>
-
-                {/* TEMPLATE TO USE
-                 <div className=" text-center">
-                  - Task name here
-                </div>
-                */}
+                {todayTasks.length > 0 ? (
+                  todayTasks.map((task) => (
+                    <div
+                      key={task.id}
+                      className={`text-center text-xs text-black ${task.complete ? "line-through" : ""}`}
+                    >
+                      - {task.title}
+                      <div className="text-[8px] font-light">
+                        {truncateText(task.description, 50)}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div id="no-tasks" className="text-center text-xs text-black">
+                    <i>Looks like you have nothing to do today!</i>
+                  </div>
+                )}
               </div>
             </div>
             <div>
@@ -223,31 +375,22 @@ const Home = (props: Props) => {
                 id="daily-quests"
                 className="grid gap-3 p-2.5 text-sm text-white"
               >
-                {/*INSERT TASKS HERE*/}
-
                 <div className="grid gap-3">
-                  {/*USE THIS TEMPLATE*/}
-                  <div className="border-4 border-solid border-black p-2 text-center text-black">
-                    - Quest 1
-                    <div className="text-[10px]">
-                      <b>Reward: </b>
-                      +5 Power, +5 Luck, +5 Health
+                  {exampleJSON.quests.daily.map((quest) => (
+                    <div
+                      className={`border-4 border-solid ${!quest.complete ? "border-black" : "border-[#22C55D]"} p-2 text-center text-black ${quest.complete ? "text-green-500" : ""}`}
+                    >
+                      {quest.complete ? "✔" : "-"} {quest.name}
+                      <div className="text-[8px] font-light">
+                        <b>Reward: </b>
+                        {Object.entries(quest.reward).map(([key, value]) => (
+                          <span key={key}>
+                            +{value} {capitalize(key)},{" "}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                  <div className="border-4 border-solid border-black p-2 text-center text-black">
-                    - Quest 1
-                    <div className="text-[10px]">
-                      <b>Reward: </b>
-                      +5 Power, +5 Luck, +5 Health
-                    </div>
-                  </div>
-                  <div className="border-4 border-solid border-black p-2 text-center text-black">
-                    - Quest 1
-                    <div className="text-[10px]">
-                      <b>Reward: </b>
-                      +5 Power, +5 Luck, +5 Health
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
