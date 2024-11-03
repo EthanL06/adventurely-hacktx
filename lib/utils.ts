@@ -92,8 +92,8 @@ const useTasksStore = create<Tasks>((set) => ({
 const useProfileStore = create<Profile>((set) => ({
     profile: null,
     fetchProfile: async () => {
-        await getDoc(doc(db, "profiles", auth.currentUser!.uid)).then(
-            (doc) => {
+        await getDoc(doc(db, "profiles", auth.currentUser!.uid))
+        .then((doc) => {
                 set({ profile: doc.data() as Profiles });
                 console.log("Profile fetched: ", doc.data());
             },
@@ -108,7 +108,7 @@ export const useProfile = () => {
     const { profile, fetchProfile } = useProfileStore();
 
     useEffect(() => {
-        const q = query(collection(db, "profile"));
+        const q = query(collection(db, "profiles"));
         const unsubscribe = onSnapshot(q, async () => {
             await fetchProfile();
         });
@@ -135,6 +135,7 @@ export const useTasks = () => {
     useEffect(() => {
         const q = query(collection(db, "tasks"));
         const unsubscribe = onSnapshot(q, async () => {
+            console.log("Tasks UPDATE DETECTED");
             await fetchTasks();
             // Get current profile stats
             const profile: Profiles = (
