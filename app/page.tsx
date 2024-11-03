@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useAuth, firebaseSignIn } from "@/lib/auth";
+import { useAuth, firebaseSignIn, firebaseSignInGuest } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -41,7 +41,11 @@ export default function Home() {
           </div>
           <div className="ml-5">Sign In with Google</div>
         </Button>
-        <Button className="text-sm" variant={"ghost"}>
+        <Button
+          onClick={firebaseSignInGuest}
+          className="text-sm"
+          variant={"ghost"}
+        >
           Play as Guest
         </Button>
       </div>

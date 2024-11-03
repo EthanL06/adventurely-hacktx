@@ -5,6 +5,7 @@ import Container from "@/components/ui/container";
 import React, { useState, useEffect } from "react";
 import { useAuthStore, firebaseSignOut } from "@/lib/auth";
 import { useRouter } from "next/navigation";
+import { getStats } from "../actions";
 
 type Props = {};
 
@@ -82,7 +83,7 @@ const Home = (props: Props) => {
       </div>
       <h1 className="retro-text-solid text-center text-4xl text-white">Home</h1>
       <h3 className="text-1xl retro-text-solid pb-5 text-center text-white">
-        Good afternoon, {user?.displayName}!
+        Good afternoon, {user?.displayName || "Guest"}!
       </h3>
 
       <div className="lg flex grid-cols-4 flex-col gap-2 lg:grid">
@@ -236,6 +237,8 @@ const Home = (props: Props) => {
               </div>
             </div>
           </div>
+
+          <Button>Testing</Button>
         </Container>
       </div>
     </div>

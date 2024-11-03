@@ -18,6 +18,7 @@ import { twMerge } from "tailwind-merge";
 
 import type { Profiles } from "../types/profiles";
 import type { Tasks, Task } from "../types/tasks";
+import { getStats, getSubtasks } from "@/app/actions";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -46,7 +47,16 @@ const useTasksStore = create<Tasks>((set) => ({
       task.uuid = auth.currentUser?.uid;
     }
 
-    task.subtasks = [];
+    const { subtasks } = await getSubtasks({
+      title: task.title,
+      description: task.description,
+    });
+
+    console.log("Subtasks fetched: ", subtasks);
+
+    task.subtasks = subtasks.subtasks;
+
+    console.log("Task with subtasks: ", task);
 
     await addDoc(collection(db, "tasks"), task).then(
       (docRef) => {

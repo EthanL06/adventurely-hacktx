@@ -7,6 +7,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
+  signInAnonymously,
   getAdditionalUserInfo,
 } from "firebase/auth";
 import { create } from "zustand";
@@ -61,6 +62,16 @@ export const firebaseSignIn = async () => {
             console.error(error);
         })
 }
+
+export const firebaseSignInGuest = async () => {
+  signInAnonymously(auth)
+    .then(async (result) => {
+      console.log(result);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
 
 export const firebaseSignOut = async () => {
   try {

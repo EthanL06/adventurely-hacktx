@@ -1,6 +1,7 @@
 import type { QuerySnapshot, Timestamp } from "firebase/firestore";
 
 export interface Task {
+  task: Promise<{ subtasks: { subtasks: Task["subtasks"] } }>;
   uuid?: string | null;
   title: string | null;
   description: string | null;
