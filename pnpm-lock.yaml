@@ -59,6 +59,9 @@ importers:
       react-dom:
         specifier: 19.0.0-rc-65a56d0e-20241020
         version: 19.0.0-rc-65a56d0e-20241020(react@19.0.0-rc-65a56d0e-20241020)
+      react-hook-form:
+        specifier: ^7.53.1
+        version: 7.53.1(react@19.0.0-rc-65a56d0e-20241020)
       tailwind-merge:
         specifier: ^2.5.4
         version: 2.5.4
@@ -2227,6 +2230,12 @@ packages:
     resolution: {integrity: sha512-OrsgAX3LQ6JtdBJayK4nG1Hj5JebzWyhKSsrP/bmkeFxulb0nG2LaPloJ6kBkAxtgjiwRyGUciJ4+Qu64gy/KA==}
     peerDependencies:
       react: 19.0.0-rc-65a56d0e-20241020
+
+  react-hook-form@7.53.1:
+    resolution: {integrity: sha512-6aiQeBda4zjcuaugWvim9WsGqisoUk+etmFEsSUMm451/Ic8L/UAb7sRtMj3V+Hdzm6mMjU1VhiSzYUZeBm0Vg==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      react: ^16.8.0 || ^17 || ^18 || ^19
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
@@ -4996,6 +5005,10 @@ snapshots:
     dependencies:
       react: 19.0.0-rc-65a56d0e-20241020
       scheduler: 0.25.0-rc-65a56d0e-20241020
+
+  react-hook-form@7.53.1(react@19.0.0-rc-65a56d0e-20241020):
+    dependencies:
+      react: 19.0.0-rc-65a56d0e-20241020
 
   react-is@16.13.1: {}
 

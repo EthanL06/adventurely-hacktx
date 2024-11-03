@@ -2,13 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import Container from "@/components/ui/container";
-import React from "react";
+import React, { useEffect } from "react";
 import TaskGroup from "./_components/TaskGroup";
-import { TaskType } from "../../types";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -18,147 +16,27 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { useTasks } from "@/lib/utils";
+import { Task } from "@/types/tasks";
+import { Timestamp } from "firebase/firestore";
+
+interface FormData {
+  title: string;
+  description: string;
+  due_date: string;
+}
 
 type Props = {};
 
 const Page = (props: Props) => {
-  const testData = [
-    {
-      id: 1,
-      title: "Website Redesign Project",
-      description:
-        "Redesign the company website to improve user experience and modernize the interface. This includes updating the visual style, reorganizing content, and ensuring mobile compatibility.",
-      due_date: "11/1/2024",
-      subtasks: [
-        {
-          title: "Research user preferences",
-          description:
-            "Conduct surveys and analyze user feedback to identify key pain points in the current design.",
-        },
-        {
-          title: "Create initial wireframes",
-          description:
-            "Develop wireframes to outline the updated layout and content structure.",
-        },
-      ],
-    },
-    {
-      id: 2,
-      title: "Q4 Marketing Campaign",
-      description:
-        "Plan and execute a targeted marketing campaign to increase engagement and sales during the holiday season. Focus on social media, email marketing, and influencer collaborations.",
-      due_date: "11/30/2024",
-      subtasks: [
-        {
-          title: "Identify key influencers",
-          description:
-            "Compile a list of influencers who align with the brand and reach out for collaboration.",
-        },
-        {
-          title: "Develop social media content",
-          description:
-            "Create engaging posts, stories, and ads for the campaign, ensuring consistency with the brand message.",
-        },
-      ],
-    },
-    {
-      id: 3,
-      title: "End-of-Year Financial Reporting",
-      description:
-        "Prepare financial statements and reports for the fiscal year. Ensure all records are accurate and aligned with auditing standards.",
-      due_date: "12/10/2024",
-      subtasks: [
-        {
-          title: "Compile financial data",
-          description:
-            "Gather and organize all relevant financial records from the year.",
-        },
-        {
-          title: "Review and audit data",
-          description:
-            "Conduct an internal review to ensure accuracy and compliance with regulations.",
-        },
-      ],
-    },
-    {
-      id: 4,
-      title: "Product Launch - New Software Update",
-      description:
-        "Coordinate the release of the latest software update, including testing, documentation, and marketing to reach existing and potential users.",
-      due_date: "12/20/2024",
-      subtasks: [
-        {
-          title: "Run final quality assurance tests",
-          description:
-            "Test the software to ensure all features work as expected and identify any last-minute bugs.",
-        },
-        {
-          title: "Prepare user documentation",
-          description:
-            "Update the user manual and release notes to reflect the new features and fixes.",
-        },
-      ],
-    },
-    {
-      id: 5,
-      title: "Annual Employee Performance Review",
-      description:
-        "Conduct performance reviews for all employees to evaluate their contributions over the past year and discuss goals for the upcoming year.",
-      due_date: "1/05/2025",
-      subtasks: [
-        {
-          title: "Collect feedback from team leads",
-          description:
-            "Reach out to team leads for feedback on their team members' performance and growth.",
-        },
-        {
-          title: "Schedule review meetings",
-          description:
-            "Coordinate with each employee to schedule a one-on-one review session.",
-        },
-      ],
-    },
-    {
-      id: 6,
-      title: "Update Internal Training Materials",
-      description:
-        "Refresh training materials to reflect recent changes in company policies, tools, and processes.",
-      due_date: "1/15/2025",
-      subtasks: [
-        {
-          title: "Revise onboarding documents",
-          description:
-            "Update onboarding guides with the latest policies and tool instructions.",
-        },
-        {
-          title: "Create training videos",
-          description:
-            "Record new training videos demonstrating updated processes.",
-        },
-      ],
-    },
-    {
-      id: 7,
-      title: "Client Satisfaction Survey",
-      description:
-        "Conduct an annual survey to gather feedback from clients regarding their satisfaction and identify areas for improvement.",
-      due_date: "1/25/2025",
-      subtasks: [
-        {
-          title: "Draft survey questions",
-          description:
-            "Prepare a list of questions focused on various aspects of client satisfaction.",
-        },
-        {
-          title: "Send survey to clients",
-          description: "Distribute the survey via email to all active clients.",
-        },
-      ],
-    },
-  ] as TaskType[];
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const { addTask, tasksQuery } = useTasks();
 
-  const formatRelativeDate = (dueDate: string) => {
-    const date = new Date(dueDate);
+  const { register, handleSubmit, reset, formState } = useForm<FormData>();
+
+  const formatRelativeDate = (dueDate: Timestamp) => {
+    const date = new Date(dueDate.toDate());
     const now = new Date();
     const diffDays = Math.floor(
       (date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
@@ -172,31 +50,47 @@ const Page = (props: Props) => {
     return "Later";
   };
 
-  const groupTasksByDate = (tasks: TaskType[]) => {
+  const groupTasksByDate = (tasks: Task[]) => {
+    // Sort the tasks by due date in ascending order
+    tasks.sort((a: Task, b: Task) => {
+      const dateA = a.due_date
+        ? new Date((a.due_date as Timestamp).toDate()).getTime()
+        : 0;
+      const dateB = b.due_date
+        ? new Date((b.due_date as Timestamp).toDate()).getTime()
+        : 0;
+      return dateA - dateB;
+    });
+
     return tasks.reduce(
       (groups, task) => {
-        const dateCategory = formatRelativeDate(task.due_date);
+        const dateCategory = formatRelativeDate(task.due_date as Timestamp);
         if (!groups[dateCategory]) groups[dateCategory] = [];
         groups[dateCategory].push(task);
         return groups;
       },
-      {} as Record<string, TaskType[]>,
+      {} as Record<string, Task[]>,
     );
   };
 
-  const groupedTasks = groupTasksByDate(testData);
+  const tasks = tasksQuery?.docs.map((doc) => doc.data() as Task) || [];
+  const groupedTasks = groupTasksByDate(tasks);
 
-  // Sort the tasks in each group by due date
-  Object.keys(groupedTasks).forEach((date) => {
-    groupedTasks[date].sort(
-      (
-        a: { due_date: string | number | Date },
-        b: { due_date: string | number | Date },
-      ) => {
-        return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
-      },
-    );
-  });
+  const onSubmit = async (data: {
+    title: string;
+    description: string;
+    due_date: string;
+  }) => {
+    await addTask({
+      title: data.title,
+      description: data.description,
+      due_date: new Date(data.due_date) as unknown as Timestamp,
+      done: false,
+    });
+
+    reset();
+    setIsDialogOpen(false);
+  };
 
   return (
     <div className="px-12 py-4">
@@ -222,8 +116,18 @@ const Page = (props: Props) => {
         <div className="flex justify-between">
           <h1 className="retro-text text-3xl">Your Tasks (3/9 complete)</h1>
           <div className="flex items-center">
-            <Dialog>
-              <DialogTrigger asChild>
+            <Dialog
+              open={isDialogOpen}
+              onOpenChange={(val) => {
+                setIsDialogOpen(val);
+              }}
+            >
+              <DialogTrigger
+                onClick={() => {
+                  setIsDialogOpen(true);
+                }}
+                asChild
+              >
                 <Button className="flex items-center" size={"xs"}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -245,25 +149,29 @@ const Page = (props: Props) => {
                   <DialogTitle>Add a new task...</DialogTitle>
                 </DialogHeader>
 
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                  }}
-                  className="space-y-4"
-                >
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="title">Title</Label>
-                    <Input id="title" placeholder="Task title" />
+                    <Input
+                      {...register("title", { required: true })}
+                      id="title"
+                      placeholder="Task title"
+                    />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="description">Description</Label>
-                    <Textarea id="description" placeholder="Task description" />
+                    <Textarea
+                      {...register("description", { required: true })}
+                      id="description"
+                      placeholder="Task description"
+                    />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="due_date">Due Date</Label>
                     <Input
+                      {...register("due_date", { required: true })}
                       type="datetime-local"
                       id="due_date"
                       placeholder="Task due date"

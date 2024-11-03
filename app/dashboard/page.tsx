@@ -32,10 +32,12 @@ var stats = {
 const Home = (props: Props) => {
   const router = useRouter();
   const { user } = useAuthStore();
-  if (!user) {
-    router.push("/");
-    return;
-  }
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/");
+    }
+  }, [user, router]);
 
   // TIME
   const [currentTime, setCurrentTime] = useState("");
@@ -61,25 +63,6 @@ const Home = (props: Props) => {
 
   return (
     <div className="p-4">
-      <div className="fixed left-0 top-36 z-0">
-        <div className="relative flex w-full flex-nowrap">
-          <div className="flex h-screen w-screen animate-infinite-scroll-x items-center justify-center md:justify-start">
-            <img
-              src="./images/background.png"
-              alt="background"
-              className="size-full object-cover"
-            />
-          </div>
-          <div className="flex h-screen w-screen animate-infinite-scroll-x items-center justify-center md:justify-start">
-            <img
-              src="./images/background.png"
-              alt="background"
-              className="size-full object-cover"
-            />
-          </div>
-        </div>
-      </div>
-
       <div className="pb-2">
         <div className="absolute right-5 top-5 !p-0">
           <Button
@@ -104,10 +87,11 @@ const Home = (props: Props) => {
 
       <div className="lg flex grid-cols-4 flex-col gap-2 lg:grid">
         <Container className="col-span-1 !p-4 text-xl">
-          <h1 className="retro-text text-md text-center text-black">Stats</h1>
+          <h1 className="retro-text text-md text-center text-black">
+            Character Stats
+          </h1>
           <div className="flex justify-center">
-            <img className="p-6" src="./favicon.ico"></img>{" "}
-            {/*TEMPORARY IMAGE*/}
+            <img className="p-6" src="./images/character.png"></img>
           </div>
           <div>
             <Container className="grid grid-rows-4 gap-y-2 !p-3 text-xs text-black">
