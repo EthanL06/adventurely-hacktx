@@ -80,6 +80,10 @@
     text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
   }
 
+  .retro-text-solid {
+    text-shadow: 3px 3px 0px rgba(0, 0, 0, 1);
+  }
+
   @keyframes marquee {
     0% {
       transform: translateX(0%);
