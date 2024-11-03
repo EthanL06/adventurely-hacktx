@@ -190,7 +190,11 @@ const Home = (props: Props) => {
                 >
                   <div>Tasks</div>
                 </Button>
-                <Button>
+                <Button
+                  onClick={() => {
+                    router.push("/storyline");
+                  }}
+                >
                   <div>Storyline</div>
                 </Button>
                 <Button>
@@ -237,8 +241,6 @@ const Home = (props: Props) => {
               </div>
             </div>
           </div>
-
-          <Button>Testing</Button>
         </Container>
       </div>
     </div>
