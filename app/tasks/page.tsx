@@ -20,6 +20,7 @@ import { useForm } from "react-hook-form";
 import { useTasks } from "@/lib/utils";
 import { Task } from "@/types/tasks";
 import { Timestamp } from "firebase/firestore";
+import { getStats } from "../actions";
 
 interface FormData {
   title: string;
