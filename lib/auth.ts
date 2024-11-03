@@ -11,7 +11,7 @@ import {
 } from "firebase/auth";
 import { create } from "zustand";
 import { auth, db } from "./firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
 
 interface AuthStore {
   user: User | null;
@@ -42,8 +42,7 @@ export const firebaseSignIn = async () => {
             if (getAdditionalUserInfo(result)?.isNewUser) {
                 console.log("New user signed in");
                 console.log("Making a new entry on profile...");
-                await addDoc(collection(db, "profiles"), {
-                    uuid: auth.currentUser?.uid,
+                await setDoc(doc(db, "profiles", auth.currentUser!.uid), {
                     stats: {
                         hp: 20,
                         xp: 0,
@@ -51,8 +50,8 @@ export const firebaseSignIn = async () => {
                         int: 10,
                         level: 1
                     }
-                }).then((docRef) => {
-                    console.log("Document written with ID: ", docRef.id);
+                }).then(() => {
+                    console.log("Document written with ID:");
                 }, (error) => {
                     console.error("Error adding document: ", error);
                 });
