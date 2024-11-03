@@ -246,7 +246,7 @@ const Home = () => {
                     <div>
                         <Container className="grid grid-rows-4 gap-y-2 !p-3 text-xs text-black">
                             <div className="grid grid-cols-3 grid-rows-1">
-                                <div className="col-span-1 row-span-1 text-left">Health</div>
+                                <div className="col-span-1 row-span-1 text-left">HP</div>
                                 <div
                                     style={{
                                         width: `${profile?.stats.hp}%`,
