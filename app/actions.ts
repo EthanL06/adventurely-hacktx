@@ -69,3 +69,46 @@ export async function getSubtasks({
 
   return { subtasks };
 }
+
+// It will take in all tasks and generate a cohesive story line based on the tasks
+export async function getStoryLine(name: string, { tasks }: { tasks: Task[] }) {
+  // Filter out non-done tasks
+  tasks = tasks.filter((task) => !task.done);
+
+  const message = (task: Task) => {
+    let msg = `Task Title: ${task.title}. Task Description: ${task.description}.`;
+
+    if (task.subtasks) {
+      task.subtasks.forEach((subtask) => {
+        msg += `Subtask Title: ${subtask.title}. Subtask Description: ${subtask.description}.`;
+      });
+    }
+
+    return msg;
+  };
+
+  const { object: storyLine } = (await generateObject({
+    model: openai("gpt-3.5-turbo"),
+    system:
+      "Given a list of tasks, create an adventurous storyline where each task represents a unique challenge or mission the user must complete to progress. The place is called Adventurify. Weave the tasks into a cohesive plot, introducing each one as an exciting part of the journey. For example, studying might become 'gathering knowledge from ancient scrolls,' and exercising could be 'training to increase strength for an upcoming battle.' Maintain a narrative where each completed task brings the user closer to an ultimate goal, such as saving a kingdom, finding a lost artifact, or defeating a powerful enemy. Ensure the storyline reflects the theme of courage, growth, and perseverance, and provide a brief summary of how each task contributes to the story. You will also be given the user's name to personalize the storyline.",
+    messages: [
+      {
+        role: "user",
+        content: `User Name: ${name}.`,
+      },
+      ...tasks.map((task) => ({
+        role: "user" as const,
+        content: message(task),
+      })),
+    ],
+    schema: z.object({
+      storyLine: z.string().describe("The generated storyline."),
+    }),
+  })) as {
+    object: {
+      storyLine: string;
+    };
+  };
+
+  return { storyLine };
+}

@@ -21,6 +21,8 @@ import { useTasks } from "@/lib/utils";
 import { Task } from "@/types/tasks";
 import { Timestamp } from "firebase/firestore";
 import { getStats } from "../actions";
+import { useAuth } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 
 interface FormData {
   title: string;
@@ -31,6 +33,15 @@ interface FormData {
 type Props = {};
 
 const Page = (props: Props) => {
+  const { user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/");
+    }
+  }, [user, router]);
+
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const { addTask, tasksQuery } = useTasks();
 
@@ -115,7 +126,7 @@ const Page = (props: Props) => {
 
       <Container>
         <div className="flex justify-between">
-          <h1 className="retro-text text-3xl">Your Tasks (3/9 complete)</h1>
+          <h1 className="retro-text text-3xl">Your Tasks</h1>
           <div className="flex items-center">
             <Dialog
               open={isDialogOpen}
