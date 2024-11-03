@@ -1,15 +1,21 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useAuth, firebaseSignIn } from "@/lib/auth";
+import { useAuth, firebaseSignIn, firebaseSignInGuest } from "@/lib/auth";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Home() {
   const router = useRouter();
   const { user } = useAuth();
 
+  useEffect(() => {
+    if (user) {
+      router.push("/dashboard");
+    }
+  }, [user, router]);
+
   if (user) {
-    router.push("/dashboard");
     return (
       <div className="grid min-h-screen place-items-center">
         <div>Loading...</div>
@@ -30,12 +36,16 @@ export default function Home() {
       </div>
       <div className="flex flex-col gap-y-4">
         <Button onClick={firebaseSignIn}>
-          <div className="relative">
+          <div className="relative h-5 w-2.5">
             <i className="nes-icon google"></i>
           </div>
-          <div className="ml-7">Sign In with Google</div>
+          <div className="ml-5">Sign In with Google</div>
         </Button>
-        <Button className="text-sm" variant={"ghost"}>
+        <Button
+          onClick={firebaseSignInGuest}
+          className="text-sm"
+          variant={"ghost"}
+        >
           Play as Guest
         </Button>
       </div>

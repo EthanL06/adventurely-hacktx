@@ -7,9 +7,12 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
+  signInAnonymously,
+  getAdditionalUserInfo,
 } from "firebase/auth";
 import { create } from "zustand";
-import { auth } from "./firebase";
+import { auth, db } from "./firebase";
+import { setDoc, doc } from "firebase/firestore";
 
 interface AuthStore {
   user: User | null;
@@ -35,8 +38,33 @@ provider.setCustomParameters({
 });
 
 export const firebaseSignIn = async () => {
-  console.log("SIGNIN");
-  signInWithPopup(auth, provider)
+    signInWithPopup(auth, provider)
+        .then(async (result) => {
+            if (getAdditionalUserInfo(result)?.isNewUser) {
+                console.log("New user signed in");
+                console.log("Making a new entry on profile...");
+                await setDoc(doc(db, "profiles", auth.currentUser!.uid), {
+                    stats: {
+                        hp: 20,
+                        xp: 0,
+                        str: 10,
+                        int: 10,
+                        level: 1
+                    }
+                }).then(() => {
+                    console.log("Document written with ID:");
+                }, (error) => {
+                    console.error("Error adding document: ", error);
+                });
+            }
+            console.log(result);
+        }).catch((error) => {
+            console.error(error);
+        })
+}
+
+export const firebaseSignInGuest = async () => {
+  signInAnonymously(auth)
     .then(async (result) => {
       console.log(result);
     })

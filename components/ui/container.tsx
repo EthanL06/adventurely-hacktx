@@ -6,11 +6,19 @@ type Props = {
   center?: boolean;
   children: React.ReactNode;
   className?: string;
+  onClick?: () => void;
 };
 
-const Container = ({ title, center = false, children, className }: Props) => {
+const Container = ({
+  title,
+  center = false,
+  children,
+  className,
+  onClick,
+}: Props) => {
   return (
     <div
+      onClick={onClick}
       className={cn(
         `nes-container bg-white`,
         {
