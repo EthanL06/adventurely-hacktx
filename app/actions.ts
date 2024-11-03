@@ -3,7 +3,7 @@
 import { generateObject } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
-import { Task, Tasks } from "@/types/tasks";
+import { Task } from "@/types/tasks";
 
 export async function getStats({
   title,

@@ -5,7 +5,6 @@ import Container from "@/components/ui/container";
 import React, { useState, useEffect } from "react";
 import { useAuthStore, firebaseSignOut } from "@/lib/auth";
 import { useRouter } from "next/navigation";
-import { getStats } from "../actions";
 
 type Props = {};
 
