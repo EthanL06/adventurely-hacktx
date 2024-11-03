@@ -25,6 +25,18 @@ const capitalize = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
+function getGreetingTime() {
+  const currentHour = new Date().getHours();
+
+  if (currentHour >= 5 && currentHour < 12) {
+    return "morning";
+  } else if (currentHour >= 12 && currentHour < 18) {
+    return "afternoon";
+  } else {
+    return "evening";
+  }
+}
+
 const exampleJSON = {
   quests: {
     lastRefresh: null as string | null,
@@ -149,13 +161,10 @@ const exampleJSON = {
 };
 
 // TASKS
-
 const today = new Date().toLocaleDateString("en-US");
 const todayTasks = exampleJSON.tasks
   .filter((task) => task.due_date == today && !task.complete)
   .slice(0, 3);
-
-// LOAD STATS, getRandom() is temporary
 
 const Home = (props: Props) => {
   const router = useRouter();
@@ -202,7 +211,7 @@ const Home = (props: Props) => {
     exampleJSON.quests.lastRefresh != today
   ) {
     exampleJSON.quests.lastRefresh = today;
-    // Refresh quests here
+    // Create quests here using AI
   }
 
   return (
@@ -245,7 +254,7 @@ const Home = (props: Props) => {
       </div>
       <h1 className="retro-text-solid text-center text-4xl text-white">Home</h1>
       <h3 className="text-1xl retro-text-solid pb-5 text-center text-white">
-        Good afternoon, {user?.displayName}!
+        Good {getGreetingTime()}, {user?.displayName}!
       </h3>
 
       <div className="lg flex grid-cols-4 flex-col gap-2 lg:grid">
@@ -318,7 +327,7 @@ const Home = (props: Props) => {
         </Container>
         <Container className="col-span-3 p-3">
           <div className="grid grid-cols-2 grid-rows-1 gap-4">
-            <div>
+            <div className="p-2.5">
               <h1 className="text-1xl retro-text pb-3 pt-2 text-center text-black">
                 Today's To-Do
               </h1>
@@ -346,7 +355,7 @@ const Home = (props: Props) => {
               </div>
             </div>
             <div>
-              <h1 className="text-1xl retro-text pb-3 pt-2 text-center text-black">
+              <h1 className="text-1xl retro-text pb-3 pt-4 text-center text-black">
                 Quick Actions
               </h1>
               <div className="grid gap-2 border-2 border-solid border-white text-sm text-white">
@@ -378,16 +387,20 @@ const Home = (props: Props) => {
                 <div className="grid gap-3">
                   {exampleJSON.quests.daily.map((quest) => (
                     <div
+                      key={`ID_${quest.name}`}
                       className={`border-4 border-solid ${!quest.complete ? "border-black" : "border-[#22C55D]"} p-2 text-center text-black ${quest.complete ? "text-green-500" : ""}`}
                     >
                       {quest.complete ? "✔" : "-"} {quest.name}
                       <div className="text-[8px] font-light">
                         <b>Reward: </b>
-                        {Object.entries(quest.reward).map(([key, value]) => (
-                          <span key={key}>
-                            +{value} {capitalize(key)},{" "}
-                          </span>
-                        ))}
+                        {Object.entries(quest.reward).map(
+                          ([key, value], index, array) => (
+                            <span key={key}>
+                              +{value} {capitalize(key)}
+                              {index < array.length - 1 && ", "}
+                            </span>
+                          ),
+                        )}
                       </div>
                     </div>
                   ))}
