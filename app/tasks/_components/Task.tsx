@@ -1,8 +1,9 @@
 import React from "react";
-import { TaskType } from "@/types";
 import Container from "@/components/ui/container";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Task as TaskType } from "@/types/tasks";
+
 type Props = {
   task: TaskType;
   open: boolean;
@@ -12,9 +13,8 @@ type Props = {
 };
 
 const Task = ({ task, open, setOpen, checked, setChecked }: Props) => {
-  const dueDate = new Date(task.due_date);
-  const now = new Date();
-  const diff = dueDate.getTime() - now.getTime();
+  const dueDate = task.due_date ? new Date(task.due_date.toDate()) : new Date();
+
   let formattedDate = dueDate.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
@@ -23,6 +23,7 @@ const Task = ({ task, open, setOpen, checked, setChecked }: Props) => {
     hour: "numeric",
     minute: "2-digit",
   })}`;
+
   return (
     <div className="flex w-full items-center gap-x-4">
       <div

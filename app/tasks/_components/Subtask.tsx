@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { TaskType } from "@/types";
+
 import Container from "@/components/ui/container";
 import { cn } from "@/lib/utils";
+import { Task } from "@/types/tasks";
 type Props = {
-  subtask: TaskType["subtasks"][0];
+  subtask: NonNullable<Task["subtasks"]>[0];
   allComplete: boolean;
 };
 

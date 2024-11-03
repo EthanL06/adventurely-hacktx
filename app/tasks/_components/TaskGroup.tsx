@@ -1,10 +1,10 @@
 "use client";
 
-import React, { Fragment, useState } from "react";
-import { TaskType } from "@/types";
+import React, { useState } from "react";
+import { Task as TaskType } from "@/types/tasks";
 import Task from "./Task";
 import Subtask from "./Subtask";
-import { cn } from "@/lib/utils";
+import { cn, useTasks } from "@/lib/utils";
 type Props = {
   date: "Overdue" | "Today" | string;
   tasks: TaskType[];
@@ -24,7 +24,7 @@ const TaskGroup = ({ date, tasks }: Props) => {
       </h2>
       <div className={cn("flex flex-col gap-4")}>
         {tasks.map((task) => (
-          <TaskInnerGroup key={task.id} task={task} />
+          <TaskInnerGroup key={task.title} task={task} />
         ))}
       </div>
     </div>
@@ -49,12 +49,13 @@ const TaskInnerGroup = ({ task }: { task: TaskType }) => {
         setOpen={setOpen}
         checked={checked}
         setChecked={setChecked}
-        key={task.id}
         task={task}
       />
 
       <div className="ml-24 flex flex-col gap-4">
         {open &&
+          task.subtasks &&
+          task.subtasks.length > 0 &&
           task.subtasks.map((subtask) => (
             <Subtask
               key={subtask.title}

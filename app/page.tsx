@@ -3,19 +3,25 @@
 import { Button } from "@/components/ui/button";
 import { useAuth, firebaseSignIn } from "@/lib/auth";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Home() {
   const router = useRouter();
   const { user } = useAuth();
 
-  // if (user) {
-  //   router.push("/dashboard");
-  //   return (
-  //     <div className="grid min-h-screen place-items-center">
-  //       <div>Loading...</div>
-  //     </div>
-  //   );
-  // }
+  useEffect(() => {
+    if (user) {
+      router.push("/dashboard");
+    }
+  }, [user, router]);
+
+  if (user) {
+    return (
+      <div className="grid min-h-screen place-items-center">
+        <div>Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative bottom-14 z-50 flex min-h-screen flex-col items-center justify-center p-5">
